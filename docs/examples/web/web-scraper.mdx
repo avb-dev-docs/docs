@@ -1,6 +1,8 @@
 ---
-title: "AI Web Scraper"
-description: "Learn how to use JigsawStack's AI Web Scraper to intelligently extract specific information from any website"
+title: AI Web Scraper
+description: >-
+  Learn how to use JigsawStack's AI Web Scraper to intelligently extract
+  specific information from any website
 ---
 
 ## Overview
@@ -21,12 +23,12 @@ POST /v1/ai/scrape
 
 ## Quick Start
 
-```javascript Javascript
+```javascript
 import { JigsawStack } from "jigsawstack";
 
-const jigsaw = JigsawStack({ apiKey: "your-api-key" });
+const jigsaw = new JigsawStack({ apiKey: "your-api-key" });
 
-const response = await jigsaw.scrape({
+const response = await jigsaw.web.ai_scrape({
   url: "https://example.com",
   element_prompts: [
     {
@@ -50,18 +52,8 @@ console.log(response);
 {
   "success": true,
   "data": {
-    "product name": "UltraPhone Pro X5",
-    "current price": "$899.99",
-    "average rating": "4.7/5",
-    "available colors": ["Midnight Black", "Ocean Blue", "Silver", "Rose Gold"],
-    "key specifications": {
-      "processor": "OctoCore X3 4.5GHz",
-      "memory": "12GB RAM",
-      "storage": "256GB",
-      "display": "6.7-inch AMOLED",
-      "camera": "108MP quad camera system",
-      "battery": "5000mAh"
-    }
+    "title": "Example Website",
+    "description": "A sample website for demonstration"
   },
   "page_position": 1,
   "status_code": 200
@@ -77,12 +69,11 @@ The quality of your element prompts significantly affects extraction accuracy. F
 3. **Specify format when needed**: "Release date in YYYY-MM-DD format" or "price in USD"
 4. **Clarify structure**: "List of ingredients" indicates you expect an array return
 
+## Handling Dynamic Content
 
-## Example
-
-```javascript Handling Dynamic Content
+```javascript
 // Example: Scraping a page that loads content dynamically
-const response = await jigsaw.ai.scrape({
+const response = await jigsaw.web.ai_scrape({
   url: "https://example.com/dynamic-content",
   // Wait for a specific element that indicates content is loaded
   wait_for: {
@@ -98,3 +89,41 @@ const response = await jigsaw.ai.scrape({
 });
 ```
 
+## Advanced Configuration
+
+### Wait for Content
+Use `wait_for` to handle pages with dynamic content loading:
+
+- `mode`: "selector", "xpath", or "time"
+- `value`: CSS selector, XPath, or time in milliseconds
+
+### Multiple Prompts
+You can specify multiple element prompts to extract various pieces of information:
+
+```javascript
+const response = await jigsaw.web.ai_scrape({
+  url: "https://example.com/product",
+  element_prompts: [
+    "product name",
+    "current price",
+    "product ratings",
+    "available colors"
+  ]
+});
+```
+
+### Attribute Extraction
+Extract specific HTML attributes:
+
+```javascript
+const response = await jigsaw.web.ai_scrape({
+  url: "https://example.com/products",
+  element_prompts: [
+    {
+      name: "product_links",
+      selector: "a.product-link",
+      attribute: "href"
+    }
+  ]
+});
+```
