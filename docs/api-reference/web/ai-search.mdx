@@ -1,70 +1,146 @@
 ---
-title: "AI Search"
-api: "POST https://api.jigsawstack.com/v1/web/search"
-description: "Effortlessly search the Web and get access to high-quality results powered with AI."
+title: AI Search
+api: 'POST https://api.jigsawstack.com/v1/web/search'
+description: >-
+  Effortlessly search the Web and get access to high-quality results powered
+  with AI.
 ---
 
-import SearchSnippet from "/snippets/code-req-examples/ai-search.mdx";
+## Overview
+
+The AI Search API allows you to perform web searches with advanced AI-powered features, including content summarization, safety filters, and deep research capabilities.
+
+## Request Parameters
 
 ### Body
 
 <ParamField body="query" type="string" required>
-  The search value. The maximum query character length is 400.
+  The search query. Maximum length is 400 characters.
 </ParamField>
 
 <ParamField body="ai_overview" type="boolean" default="true">
-  Include AI powered overview in the search results
+  Include AI-powered overview in the search results.
 </ParamField>
 
 <ParamField body="safe_search" type="string" default="moderate">
-  Include offensive results in the search results
+  Control the inclusion of potentially offensive results:
   <ul>
-    <li>`moderate`</li>
+    <li>`moderate` (default)</li>
     <li>`strict`</li>
     <li>`off`</li>
   </ul>
 </ParamField>
 
 <ParamField body="spell_check" type="boolean" default="true">
-  Spell check the search query.
+  Enable spell checking for the search query.
 </ParamField>
 
 <ParamField body="byo_urls" type="string[]">
-  Return results from the specified URLs.
+  Array of specific URLs to include in the search results.
+</ParamField>
+
+<ParamField body="country_code" type="string">
+  ISO 3166-1 alpha-2 country code to localize search results.
+</ParamField>
+
+<ParamField body="auto_scrape" type="boolean">
+  Automatically scrape and include content from search results.
 </ParamField>
 
 <ParamField body="deep_research" type="boolean">
-  Toggle deep research mode.
+  Enable deep research mode for more comprehensive results.
 </ParamField>
 
-<ResponseField name="deep_research_config" type="object">
-  The deep research configuration.
-  <Expandable title="Deep Research Config Object Structure" defaultOpen>
-    <ResponseField name="max_depth" type="number" default="3">
-      Specifies the depth of research by controlling the number of recursive iterations the framework performs. A higher value enables more thorough but longer searches.
-    </ResponseField>
+<ParamField body="deep_research_config" type="object">
+  Configuration options for deep research mode:
+  <Expandable title="Deep Research Config Object">
+    <ParamField body="max_depth" type="number" default="3">
+      Maximum depth of recursive research iterations.
+    </ParamField>
+    <ParamField body="max_breadth" type="number" default="3">
+      Maximum number of parallel subqueries at each depth level.
+    </ParamField>
+    <ParamField body="max_output_tokens" type="number" default="32000">
+      Maximum number of tokens in the generated output report.
+    </ParamField>
+    <ParamField body="target_output_tokens" type="number">
+      Target number of tokens for the generated output report.
+    </ParamField>
+  </Expandable>
+</ParamField>
 
-    <ResponseField name="max_breadth" type="number" default="3">
-      Determines the breadth of research by limiting the number of parallel subqueries generated at each depth level. A higher value provides wider coverage of related topics.
-    </ResponseField>
+## Response Structure
 
-    <ResponseField name="max_output_tokens" type="number" default="32000">
-      The maximum number of tokens in the generated output report.
-    </ResponseField>
+<ResponseField name="success" type="boolean">
+  Indicates whether the API call was successful.
+</ResponseField>
 
-    <ResponseField name="target_output_tokens" type="number">
-      The target number of tokens for the generated output report.
-    </ResponseField>
+<ResponseField name="query" type="string">
+  The original search query.
+</ResponseField>
 
+<ResponseField name="ai_overview" type="string">
+  AI-generated summary of the search results (if enabled).
+</ResponseField>
+
+<ResponseField name="spell_fixed" type="boolean">
+  Indicates whether the query was spell-checked and corrected.
+</ResponseField>
+
+<ResponseField name="is_safe" type="boolean">
+  Indicates whether the search results are considered safe based on the safe_search setting.
+</ResponseField>
+
+<ResponseField name="results" type="array">
+  Array of search result objects:
+  <Expandable title="Result Object">
+    <ResponseField name="title" type="string">Result title</ResponseField>
+    <ResponseField name="url" type="string">Result URL</ResponseField>
+    <ResponseField name="description" type="string">Short description</ResponseField>
+    <ResponseField name="content" type="string">Full content (if auto_scrape is enabled)</ResponseField>
+    <ResponseField name="is_safe" type="boolean">Safety status of the result</ResponseField>
+    <ResponseField name="site_name" type="string">Name of the source website</ResponseField>
+    <ResponseField name="site_long_name" type="string">Full name of the source website</ResponseField>
+    <ResponseField name="age" type="string">Age of the content</ResponseField>
+    <ResponseField name="language" type="string">Detected language of the content</ResponseField>
+    <ResponseField name="favicon" type="string">URL of the website's favicon</ResponseField>
+    <ResponseField name="snippets" type="array">Relevant text snippets from the content</ResponseField>
+    <ResponseField name="related_index" type="array">Related search suggestions</ResponseField>
   </Expandable>
 </ResponseField>
 
-<Snippet file="header.mdx" />
-
-### Response
-
-<ResponseField name="success" type="boolean">
-  Indicates whether the call was successful.
+<ResponseField name="image_urls" type="array">
+  URLs of relevant images found during the search.
 </ResponseField>
 
-<SearchSnippet />
+<ResponseField name="links" type="array">
+  Additional relevant links discovered during the search.
+</ResponseField>
+
+<ResponseField name="geo_results" type="array">
+  Geographical information related to the search query (if applicable).
+</ResponseField>
+
+## Example Usage
+
+```javascript
+import { JigsawStack } from "jigsawstack";
+
+const jigsaw = JigsawStack({ apiKey: "your-api-key" });
+
+const response = await jigsaw.web.search({
+  query: "Latest developments in renewable energy",
+  ai_overview: true,
+  safe_search: "moderate",
+  deep_research: true,
+  deep_research_config: {
+    max_depth: 2,
+    max_breadth: 5,
+  },
+});
+
+console.log(response.ai_overview);
+console.log(response.results);
+```
+
+This example demonstrates how to perform an AI-powered web search with deep research enabled, retrieving comprehensive results on the latest developments in renewable energy.
