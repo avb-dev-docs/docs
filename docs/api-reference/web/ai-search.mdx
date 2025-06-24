@@ -1,70 +1,265 @@
 ---
-title: "AI Search"
-api: "POST https://api.jigsawstack.com/v1/web/search"
-description: "Effortlessly search the Web and get access to high-quality results powered with AI."
+title: AI Search
+api: 'POST https://api.jigsawstack.com/v1/web/search'
+description: >-
+  Effortlessly search the Web and get access to high-quality results powered
+  with AI.
 ---
 
 import SearchSnippet from "/snippets/code-req-examples/ai-search.mdx";
 
+## Overview
+
+The AI Search API allows you to perform web searches with AI-enhanced results. It provides options for customizing the search experience, including AI-powered overviews, safe search settings, and deep research capabilities.
+
+## Request Parameters
+
 ### Body
 
 <ParamField body="query" type="string" required>
-  The search value. The maximum query character length is 400.
+  The search query. Maximum character length is 400.
 </ParamField>
 
 <ParamField body="ai_overview" type="boolean" default="true">
-  Include AI powered overview in the search results
+  Include AI-powered overview in the search results.
 </ParamField>
 
 <ParamField body="safe_search" type="string" default="moderate">
-  Include offensive results in the search results
+  Control the level of safe search filtering:
   <ul>
-    <li>`moderate`</li>
-    <li>`strict`</li>
-    <li>`off`</li>
+    <li>`moderate` - Default setting</li>
+    <li>`strict` - More aggressive filtering</li>
+    <li>`off` - No content filtering</li>
   </ul>
 </ParamField>
 
 <ParamField body="spell_check" type="boolean" default="true">
-  Spell check the search query.
+  Enable spell checking for the search query.
 </ParamField>
 
 <ParamField body="byo_urls" type="string[]">
-  Return results from the specified URLs.
+  Specify URLs to include in the search results.
+</ParamField>
+
+<ParamField body="country_code" type="string">
+  Two-letter country code to localize search results.
+</ParamField>
+
+<ParamField body="auto_scrape" type="boolean">
+  Enable automatic scraping of search results.
 </ParamField>
 
 <ParamField body="deep_research" type="boolean">
-  Toggle deep research mode.
+  Enable deep research mode for more comprehensive results.
 </ParamField>
 
-<ResponseField name="deep_research_config" type="object">
-  The deep research configuration.
-  <Expandable title="Deep Research Config Object Structure" defaultOpen>
-    <ResponseField name="max_depth" type="number" default="3">
-      Specifies the depth of research by controlling the number of recursive iterations the framework performs. A higher value enables more thorough but longer searches.
-    </ResponseField>
-
-    <ResponseField name="max_breadth" type="number" default="3">
-      Determines the breadth of research by limiting the number of parallel subqueries generated at each depth level. A higher value provides wider coverage of related topics.
-    </ResponseField>
-
-    <ResponseField name="max_output_tokens" type="number" default="32000">
-      The maximum number of tokens in the generated output report.
-    </ResponseField>
-
-    <ResponseField name="target_output_tokens" type="number">
-      The target number of tokens for the generated output report.
-    </ResponseField>
-
+<ParamField body="deep_research_config" type="object">
+  Configure deep research parameters:
+  <Expandable title="Deep Research Config Object">
+    <ParamField body="max_depth" type="number" default="3">
+      Number of recursive iterations for deep research.
+    </ParamField>
+    <ParamField body="max_breadth" type="number" default="3">
+      Number of parallel subqueries generated at each depth level.
+    </ParamField>
+    <ParamField body="max_output_tokens" type="number" default="32000">
+      Maximum number of tokens in the generated output report.
+    </ParamField>
+    <ParamField body="target_output_tokens" type="number">
+      Target number of tokens for the generated output report.
+    </ParamField>
   </Expandable>
-</ResponseField>
+</ParamField>
 
 <Snippet file="header.mdx" />
 
-### Response
+## Response Structure
 
 <ResponseField name="success" type="boolean">
   Indicates whether the call was successful.
 </ResponseField>
 
+<ResponseField name="query" type="string">
+  The original search query.
+</ResponseField>
+
+<ResponseField name="ai_overview" type="string">
+  AI-generated overview of the search results (if enabled).
+</ResponseField>
+
+<ResponseField name="spell_fixed" type="boolean">
+  Indicates if spell checking was applied to the query.
+</ResponseField>
+
+<ResponseField name="is_safe" type="boolean">
+  Indicates if the search results are considered safe based on the safe_search setting.
+</ResponseField>
+
+<ResponseField name="results" type="array">
+  Array of search result objects:
+  <Expandable title="Result Object">
+    <ResponseField name="title" type="string">
+      Title of the search result.
+    </ResponseField>
+    <ResponseField name="url" type="string">
+      URL of the search result.
+    </ResponseField>
+    <ResponseField name="description" type="string">
+      Brief description or snippet of the search result.
+    </ResponseField>
+    <ResponseField name="content" type="string">
+      Full content of the search result (if available).
+    </ResponseField>
+    <ResponseField name="is_safe" type="boolean">
+      Indicates if this specific result is considered safe.
+    </ResponseField>
+    <ResponseField name="site_name" type="string">
+      Name of the website.
+    </ResponseField>
+    <ResponseField name="site_long_name" type="string">
+      Full name of the website.
+    </ResponseField>
+    <ResponseField name="age" type="string">
+      Age or publication date of the content.
+    </ResponseField>
+    <ResponseField name="language" type="string">
+      Language of the content.
+    </ResponseField>
+    <ResponseField name="favicon" type="string">
+      URL of the website's favicon.
+    </ResponseField>
+    <ResponseField name="snippets" type="array<string>">
+      Relevant text snippets from the content.
+    </ResponseField>
+    <ResponseField name="related_index" type="array<object>">
+      Related search results:
+      <Expandable title="Related Index Object">
+        <ResponseField name="title" type="string">
+          Title of the related result.
+        </ResponseField>
+        <ResponseField name="url" type="string">
+          URL of the related result.
+        </ResponseField>
+        <ResponseField name="description" type="string">
+          Brief description of the related result.
+        </ResponseField>
+        <ResponseField name="is_safe" type="boolean">
+          Indicates if the related result is considered safe.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="image_urls" type="array<string>">
+  URLs of images related to the search query.
+</ResponseField>
+
+<ResponseField name="links" type="array<string>">
+  Additional relevant links related to the search query.
+</ResponseField>
+
+<ResponseField name="geo_results" type="array<object>">
+  Geographical information related to the search query (if applicable):
+  <Expandable title="Geo Result Object">
+    <ResponseField name="type" type="string">
+      Type of geographical entity.
+    </ResponseField>
+    <ResponseField name="full_address" type="string">
+      Complete address.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Name of the location.
+    </ResponseField>
+    <ResponseField name="name_preferred" type="string">
+      Preferred name of the location.
+    </ResponseField>
+    <ResponseField name="place_formatted" type="string">
+      Formatted place name.
+    </ResponseField>
+    <ResponseField name="postcode" type="string">
+      Postal code (if available).
+    </ResponseField>
+    <ResponseField name="district" type="string">
+      District (if available).
+    </ResponseField>
+    <ResponseField name="place" type="string">
+      Place name (if available).
+    </ResponseField>
+    <ResponseField name="region" type="object">
+      Region information (excluding mapbox_id).
+    </ResponseField>
+    <ResponseField name="country" type="object">
+      Country information (excluding mapbox_id).
+    </ResponseField>
+    <ResponseField name="language" type="string">
+      Language of the geographical information.
+    </ResponseField>
+    <ResponseField name="geoloc" type="object">
+      Geographical coordinates:
+      <Expandable title="Geoloc Object">
+        <ResponseField name="type" type="string">
+          Type of geographical coordinates.
+        </ResponseField>
+        <ResponseField name="coordinates" type="array<number>">
+          Array of longitude and latitude coordinates.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="poi_category" type="string">
+      Point of interest category (if applicable).
+    </ResponseField>
+    <ResponseField name="additional_properties" type="object">
+      Any additional properties related to the geographical entity.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
 <SearchSnippet />
+
+## Usage Examples
+
+### Basic Search
+
+```javascript
+const response = await jigsaw.web.search({
+  query: "AI in healthcare",
+  ai_overview: true,
+  safe_search: "moderate"
+});
+```
+
+### Deep Research
+
+```javascript
+const response = await jigsaw.web.search({
+  query: "Impact of climate change on biodiversity",
+  deep_research: true,
+  deep_research_config: {
+    max_depth: 4,
+    max_breadth: 5,
+    max_output_tokens: 50000
+  }
+});
+```
+
+### Custom URL Search
+
+```javascript
+const response = await jigsaw.web.search({
+  query: "Latest AI research",
+  byo_urls: [
+    "https://arxiv.org/list/cs.AI/recent",
+    "https://www.nature.com/subjects/artificial-intelligence"
+  ]
+});
+```
+
+## Best Practices
+
+1. Use specific and well-formed queries for better results.
+2. Enable `ai_overview` for a quick summary of search results.
+3. Adjust `safe_search` settings based on your application's requirements.
+4. Utilize `deep_research` for comprehensive analysis on complex topics.
+5. Use `byo_urls` to focus searches on specific trusted sources.
+6. Consider using `country_code` for location-specific results when relevant.
