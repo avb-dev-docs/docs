@@ -1,10 +1,14 @@
 ---
-title: "AI Search"
-api: "POST https://api.jigsawstack.com/v1/web/search"
-description: "Effortlessly search the Web and get access to high-quality results powered with AI."
+title: AI Search
+api: 'POST https://api.jigsawstack.com/v1/web/search'
+description: >-
+  Effortlessly search the Web and get access to high-quality results powered
+  with AI.
 ---
 
 import SearchSnippet from "/snippets/code-req-examples/ai-search.mdx";
+
+## Request Parameters
 
 ### Body
 
@@ -33,6 +37,14 @@ import SearchSnippet from "/snippets/code-req-examples/ai-search.mdx";
   Return results from the specified URLs.
 </ParamField>
 
+<ParamField body="country_code" type="string">
+  The country code to localize search results. Use ISO 3166-1 alpha-2 country codes.
+</ParamField>
+
+<ParamField body="auto_scrape" type="boolean" default="false">
+  Automatically scrape and extract content from search results.
+</ParamField>
+
 <ParamField body="deep_research" type="boolean">
   Toggle deep research mode.
 </ParamField>
@@ -55,16 +67,126 @@ import SearchSnippet from "/snippets/code-req-examples/ai-search.mdx";
     <ResponseField name="target_output_tokens" type="number">
       The target number of tokens for the generated output report.
     </ResponseField>
-
   </Expandable>
 </ResponseField>
 
 <Snippet file="header.mdx" />
 
-### Response
+## Response
 
 <ResponseField name="success" type="boolean">
   Indicates whether the call was successful.
+</ResponseField>
+
+<ResponseField name="query" type="string">
+  The original search query.
+</ResponseField>
+
+<ResponseField name="ai_overview" type="string">
+  AI-generated overview of the search results (if requested).
+</ResponseField>
+
+<ResponseField name="spell_fixed" type="boolean">
+  Indicates whether the query was spell-checked and corrected.
+</ResponseField>
+
+<ResponseField name="is_safe" type="boolean">
+  Indicates whether the search results are considered safe based on the safe_search setting.
+</ResponseField>
+
+<ResponseField name="results" type="array">
+  An array of search result objects.
+  <Expandable title="Result Object Structure">
+    <ResponseField name="title" type="string">
+      The title of the search result.
+    </ResponseField>
+    <ResponseField name="url" type="string">
+      The URL of the search result.
+    </ResponseField>
+    <ResponseField name="description" type="string">
+      A brief description or snippet of the search result.
+    </ResponseField>
+    <ResponseField name="content" type="string">
+      The full content of the page (if auto_scrape is enabled).
+    </ResponseField>
+    <ResponseField name="is_safe" type="boolean">
+      Indicates whether this specific result is considered safe.
+    </ResponseField>
+    <ResponseField name="site_name" type="string">
+      The name of the website.
+    </ResponseField>
+    <ResponseField name="site_long_name" type="string">
+      The full name of the website.
+    </ResponseField>
+    <ResponseField name="age" type="string">
+      The age or publication date of the content.
+    </ResponseField>
+    <ResponseField name="language" type="string">
+      The detected language of the content.
+    </ResponseField>
+    <ResponseField name="favicon" type="string">
+      URL to the favicon of the website.
+    </ResponseField>
+    <ResponseField name="snippets" type="array">
+      An array of relevant text snippets from the content.
+    </ResponseField>
+    <ResponseField name="related_index" type="array">
+      An array of related search results or topics.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="image_urls" type="array">
+  An array of image URLs related to the search query.
+</ResponseField>
+
+<ResponseField name="links" type="array">
+  An array of relevant links extracted from the search results.
+</ResponseField>
+
+<ResponseField name="geo_results" type="array">
+  An array of geographical results, if applicable.
+  <Expandable title="Geo Result Object Structure">
+    <ResponseField name="type" type="string">
+      The type of geographical entity.
+    </ResponseField>
+    <ResponseField name="full_address" type="string">
+      The complete address of the location.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      The name of the location.
+    </ResponseField>
+    <ResponseField name="name_preferred" type="string">
+      The preferred name of the location.
+    </ResponseField>
+    <ResponseField name="place_formatted" type="string">
+      A formatted representation of the place.
+    </ResponseField>
+    <ResponseField name="postcode" type="string">
+      The postal code of the location.
+    </ResponseField>
+    <ResponseField name="district" type="string">
+      The district or area of the location.
+    </ResponseField>
+    <ResponseField name="place" type="string">
+      The specific place name.
+    </ResponseField>
+    <ResponseField name="region" type="object">
+      Information about the region.
+    </ResponseField>
+    <ResponseField name="country" type="object">
+      Information about the country.
+    </ResponseField>
+    <ResponseField name="language" type="string">
+      The language of the geographical information.
+    </ResponseField>
+    <ResponseField name="geoloc" type="object">
+      Geographical coordinates of the location.
+    </ResponseField>
+    <ResponseField name="poi_category" type="string">
+      The category of the point of interest, if applicable.
+    </ResponseField>
+  </Expandable>
 </ResponseField>
 
 <SearchSnippet />
